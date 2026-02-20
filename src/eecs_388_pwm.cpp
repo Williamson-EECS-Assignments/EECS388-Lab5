@@ -39,7 +39,6 @@
 //         MCU   |    MCU    Pin
 //         Pin  GND   Pin
 //              Pin
-#ifdef BONUS_TASK
 static void led() {
     constexpr double R[] = {0.0, 1.0, 0.3, 0.8, 1.0};
     constexpr double G[] = {1.0, 0.1, 0.8, 0.0, 0.6};
@@ -65,7 +64,6 @@ static void led() {
         }
     }
 }
-#endif // BONUS_TASK
 
 // bounded formula to get the pulse length from the angle
 //  this is an approximation
@@ -85,10 +83,6 @@ static double getPulseLength(int angle) {
  *          needed to achieve the angle passed in
  *******************************************************************************/
 static void servo(int gpio, int angle) {
-    // YOUR CODE HERE
-    // Basically, you need to take the input angle "angle" and generate the corresponding pwm signal
-    // To generate the pwm signals, use gpio_write(), delay_us(), and delay_ms().
-
     double pulseLen_us = getPulseLength(angle);
 
     //    ╭ 1-2ms
@@ -121,19 +115,17 @@ static void servo(int gpio, int angle) {
 void setup() {
     gpio_mode(GPIO_6, GPIO_OUTPUT);
 
-    // Bonus Task - Uncomment and fill out this function if you attempt the bonus task
-#ifdef BONUS_TASK
+    // Bonus Task
     gpio_mode(RED_LED, GPIO_OUTPUT);
     gpio_mode(BLUE_LED, GPIO_OUTPUT);
     gpio_mode(GREEN_LED, GPIO_OUTPUT);
-#endif // BONUS_TASK
 }
 
 /******************************************************************************
  *   Function: loop() - Main execution loop
- *      Pre condition: 
+ *      Pre condition:
  *          setup() has been executed and system is initialized
- *      Post condition: 
+ *      Post condition:
  *          Performs a single iteration of the system's function
  *          Repeates indefinetely unless the board is reset or powered off
  *******************************************************************************/
@@ -142,9 +134,9 @@ void loop() {
 
     while (true) {
 
-#ifndef BONUS_TASK
+#ifndef BONUS_TASK // !BONUS_TASK
         /**
-         * Sweeps through angles 0 -> 180 by 30 to test the 'servo' function 
+         * Sweeps through angles 0 -> 180 by 30 to test the 'servo' function
          *
          * The inner loop calls the function 50 times, causing each angle
          * to be held on the servo for ~1 second.
@@ -160,8 +152,7 @@ void loop() {
 #endif // !BONUS_TASK
 
 #ifdef BONUS_TASK
-        // Bonus Task - Uncomment and fill out this function if you attempt the bonus task
         led();
 #endif // BONUS_TASK
-        }
+    }
 }

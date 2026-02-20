@@ -79,9 +79,9 @@ static void turnOffPWM(uint8_t timer) {
 
 /******************************************************************************
 *   Function: delay_ms() - Delay Milliseconds
-*      Pre condition: 
+*      Pre condition:
 *          None
-*      Post condition: 
+*      Post condition:
 *          Delay execution of the next instruction by amount specified by
 * 			'ms'. Configured for 16MHz ATMega328P clock
 *******************************************************************************/
@@ -98,12 +98,12 @@ void delay_ms(unsigned long ms) {
 }
 
 /******************************************************************************
-*   Function: delay_us() - Delay Microseconds 
-*      Pre condition: 
+*   Function: delay_us() - Delay Microseconds
+*      Pre condition:
 *          None
-*      Post condition: 
+*      Post condition:
 *          Delay execution of the next instruction by amount specified by
-* 		   'us'. Configured for 16MHz ATMega328P clock. 
+* 		   'us'. Configured for 16MHz ATMega328P clock.
 *		   NOTE: this implementation only works between 0-16,000 microseconds!
 *
 *******************************************************************************/
@@ -130,14 +130,13 @@ void delay_us(uint16_t us)  {
 		"brne 1b" : "=w" (us) : "0" (us) // 2 cycles
 	);
 	// return = 4 cycles
-
 }
 
 /******************************************************************************
 *   Function: gpio_mode() - GPIO Mode
-*      Pre condition: 
+*      Pre condition:
 *          This should be called during the setup() initialization function
-*      Post condition: 
+*      Post condition:
 *          GPIO specified by 'pin' will be configured in the mode specified by
 * 			'mode' (either GPIO_OUTPUT or GPIO_INPUT)
 *******************************************************************************/
@@ -151,7 +150,7 @@ void gpio_mode(uint8_t pin, uint8_t mode) {
     reg = portModeRegister(port);
     out = portOutputRegister(port);
 
-    if (mode == GPIO_INPUT) { 
+    if (mode == GPIO_INPUT) {
         uint8_t oldSREG = SREG;
         cli();
         *reg &= ~bit;
