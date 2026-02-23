@@ -39,15 +39,17 @@
 //         MCU   |    MCU    Pin
 //         Pin  GND   Pin
 //              Pin
+#ifdef BONUS_TASK
 static void led() {
+    // should go: teal, orange, light blue, hot pink, purple
     constexpr double R[] = {0.0, 1.0, 0.3, 0.8, 1.0};
-    constexpr double G[] = {1.0, 0.1, 0.8, 0.0, 0.6};
-    constexpr double B[] = {1.0, 1.0, 0.0, 0.2, 1.0};
+    constexpr double G[] = {1.0, 0.1, 0.8, 0.0, 0.0};
+    constexpr double B[] = {1.0, 0.0, 1.0, 0.2, 1.0};
     constexpr double TIME_PER = SERVO_PERIOD / 3; // each LED is afforded 1/3 of the cycle to "do its thing"
 
     for (int i = 0; i < 5; i++) {
-        /* control the led for 1/2 sec duration */
-        for (int i = 0; i < 25; i++) {
+        /* control the led for 1 sec duration */
+        for (int j = 0; j < 1 * 50; j++) {
             int rDelay = TIME_PER * R[i],
                 gDelay = TIME_PER * G[i],
                 bDelay = TIME_PER * B[i];
@@ -55,23 +57,35 @@ static void led() {
             // turn on red for however long was calculated
             RGB(ON, OFF, OFF);
             delay_us(rDelay);
+            // finish off remaining time off
+            RGB(OFF, OFF, OFF);
+            delay_us(TIME_PER - rDelay);
+
             // turn on green for however long was calculated
             RGB(OFF, ON, OFF);
             delay_us(gDelay);
+            // finish off remaining time off
+            RGB(OFF, OFF, OFF);
+            delay_us(TIME_PER - gDelay);
+
             // turn on blue for however long was calculated
             RGB(OFF, OFF, ON);
             delay_us(bDelay);
+            // finish off remaining time off
+            RGB(OFF, OFF, OFF);
+            delay_us(TIME_PER - bDelay);
         }
     }
 }
+#endif
 
-// bounded formula to get the pulse length from the angle
+// formula to get the pulse length from the angle
 //  this is an approximation
-static double getPulseLength(int angle) {
+static int getPulseLength(int angle) {
     // formula to get the pulse length from the angle
-    double p = ((double)angle / 0.18) + 1000;
-    // bound p; SERVO_PULSE_MIN <= p <= SERVO_PULSE_MAX (i.e. [544, 2400])
-    return max(SERVO_PULSE_MIN, min(p, SERVO_PULSE_MAX));
+    // formula is line between two points: (0, 544); (180, 2400)
+    double p = (double)angle * 464.0 / 45.0 + 544.0;
+    return floor(p);
 }
 
 /******************************************************************************
@@ -83,7 +97,7 @@ static double getPulseLength(int angle) {
  *          needed to achieve the angle passed in
  *******************************************************************************/
 static void servo(int gpio, int angle) {
-    double pulseLen_us = getPulseLength(angle);
+    int pulseLen_us = getPulseLength(angle);
 
     //    ╭ 1-2ms
     //   ┎----┓
@@ -96,7 +110,7 @@ static void servo(int gpio, int angle) {
     // turn off for the remaining time
     gpio_write(gpio, OFF);
     delay_us(10000); // can't call for longer than 16ms so we just take 10ms in one call
-    delay_us(SERVO_PERIOD - pulseLen_us - 10000); // then finish off the remaining
+    delay_us(10000 - pulseLen_us); // then finish off the remaining
 
     // NOTE: technically there will be some amount of time between the end of
     // this function call and the time it gets called again but it should be
